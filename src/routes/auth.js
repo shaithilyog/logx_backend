@@ -59,4 +59,4 @@ router.delete('/delete-account', authenticate, async (req, res) => {
   }
 });
 
-module.exports = rout
+module.exports = router;

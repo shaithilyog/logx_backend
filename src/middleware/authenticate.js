@@ -8,20 +8,27 @@ const authenticate = async (req, res, next) => {
   }
   
   try {
-    // Verify the token and get user info
+    // Get user from token
     const { data, error } = await supabaseAdmin.auth.getUser(token);
     
-    if (error || !data.user) {
-      throw new Error('Invalid token');
+    if (error) {
+      console.error('Token verification error:', error);
+      throw error;
     }
     
-    // Attach user to request for route handlers
+    if (!data.user) {
+      throw new Error('User not found');
+    }
+    
+    console.log('Authentication successful for user:', data.user.id);
+    
+    // Attach user to request
     req.user = data.user;
     next();
   } catch (error) {
-    console.error('Authentication error:', error.message);
-    return res.status(401).json({ error: 'Unauthorized' });
+    console.error('Authentication error:', error);
+    return res.status(401).json({ error: 'Unauthorized: ' + error.message });
   }
 };
 
-module.exports = authenticate;
+module.exports = authenticate
